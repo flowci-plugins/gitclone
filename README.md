@@ -1,0 +1,1 @@
+# flowci-plugin-gitclone
