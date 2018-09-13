@@ -12,6 +12,10 @@ inputs:
   required: true
 
 script: |
-  PK_FILE=${FLOWCI_PLUGIN_WORKSPACE}/FLOWCI_RSA_PRIVATE_KEY
-  chmod 400 ${PK_FILE}
+  export PK_FILE=id_rsa
+  rm ${PK_FILE} 2> /dev/null
+
+  wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${GIT_RSA_CREDENTIAL}/private
+  chmod 600 ${PK_FILE}
+
   ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${GIT_BRANCH} ${GIT_URL}'
