@@ -22,8 +22,8 @@ script: |
   
   rm ${PK_FILE} 2> /dev/null
 
-  wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${GIT_RSA_CREDENTIAL}/private
+  wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_GIT_RSA_CREDENTIAL}/private
   chmod 600 ${PK_FILE}
 
   rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
-  ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${GIT_BRANCH} ${GIT_URL}'
+  ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
