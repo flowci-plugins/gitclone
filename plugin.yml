@@ -1,21 +1,29 @@
 name: gitclone
 version: 0.0.1
 inputs:
-- name: GIT_URL
+- name: FLOWCI_GIT_URL
   type: string
   required: true
-- name: GIT_BRANCH
+- name: FLOWCI_GIT_BRANCH
   type: string
   required: true
-- name: GIT_RSA_CREDENTIAL
+- name: FLOWCI_GIT_RSA_CREDENTIAL
+  type: string
+  required: true
+- name: FLOWCI_GIT_REPO
   type: string
   required: true
 
 script: |
-  export PK_FILE=id_rsa
+  export PK_FILE=id_rsa_${FLOWCI_GIT_RSA_CREDENTIAL}
+  echo '--------- pk file ---------'
+  echo ${PK_FILE}
+  echo '--------- pk file ---------'
+  
   rm ${PK_FILE} 2> /dev/null
 
   wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${GIT_RSA_CREDENTIAL}/private
   chmod 600 ${PK_FILE}
 
+  rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
   ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${GIT_BRANCH} ${GIT_URL}'
