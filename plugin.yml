@@ -20,7 +20,7 @@ script: |
   echo ${PK_FILE}
   echo '--------- pk file ---------'
   
-  rm ${PK_FILE} 2> /dev/null
+  rm -f ${PK_FILE} 2> /dev/null
 
   wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_GIT_RSA_CREDENTIAL}/private
   chmod 600 ${PK_FILE}
