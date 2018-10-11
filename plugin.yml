@@ -15,6 +15,8 @@ inputs:
   required: true
 
 script: |
+  echo '#################### GIT CLONE ####################'
+
   export PK_FILE=id_rsa_${FLOWCI_GIT_RSA_CREDENTIAL}
   echo '--------- pk file ---------'
   echo ${PK_FILE}
@@ -26,6 +28,9 @@ script: |
   chmod 600 ${PK_FILE}
 
   rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
+  
+  echo '**** config ssh ****'
   export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
   
+  echo '**** start clone ****'
   ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
