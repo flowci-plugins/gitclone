@@ -34,3 +34,5 @@ script: |
   
   echo '**** start clone ****'
   ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
+  
+  echo '#################### FINISH ####################'
