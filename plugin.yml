@@ -7,32 +7,39 @@ inputs:
 - name: FLOWCI_GIT_BRANCH
   type: string
   required: true
-- name: FLOWCI_GIT_RSA_CREDENTIAL
-  type: string
-  required: true
 - name: FLOWCI_GIT_REPO
   type: string
   required: true
+- name: FLOWCI_GIT_RSA_CREDENTIAL
+  type: string
+  required: false
 
 script: |
   echo '#################### GIT CLONE ####################'
-
-  export PK_FILE=id_rsa_${FLOWCI_GIT_RSA_CREDENTIAL}
-  echo '--------- pk file ---------'
-  echo ${PK_FILE}
-  echo '--------- pk file ---------'
   
-  rm -f ${PK_FILE} 2> /dev/null
-
-  wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_GIT_RSA_CREDENTIAL}/private
-  chmod 600 ${PK_FILE}
-
-  rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
+  if [[ -z "${FLOWCI_GIT_RSA_CREDENTIAL}" ]]; then
   
-  echo '**** config ssh ****'
-  export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+    export PK_FILE=id_rsa_${FLOWCI_GIT_RSA_CREDENTIAL}
+    echo '--------- pk file ---------'
+    echo ${PK_FILE}
+    echo '--------- pk file ---------'
+    
+    rm -f ${PK_FILE} 2> /dev/null
+    wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_GIT_RSA_CREDENTIAL}/private
+    chmod 600 ${PK_FILE}
+    
+    echo '**** config ssh ****'
+    export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
   
-  echo '**** start clone ****'
-  ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
+    echo '**** start clone ****'
+    rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
+    ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
+    
+  else
+    
+    rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
+    git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}
+   
+  fi
   
   echo '#################### FINISH ####################'
