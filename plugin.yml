@@ -19,6 +19,7 @@ script: |
   
   if [[ -z "${FLOWCI_GIT_RSA_CREDENTIAL}" ]]; then
   
+    echo '**** start clone ****'
     rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
     git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}
   
