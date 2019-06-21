@@ -10,14 +10,14 @@ inputs:
 - name: FLOWCI_GIT_REPO
   type: string
   required: true
-- name: FLOWCI_CREDENTIAL_SSH
+- name: FLOWCI_CREDENTIAL_SSH_RSA
   type: string
   required: false
 
 script: |
   echo '#################### GIT CLONE ####################'
   
-  if [[ -z "${FLOWCI_CREDENTIAL_SSH}" ]]; then
+  if [[ -z "${FLOWCI_CREDENTIAL_SSH_RSA}" ]]; then
   
     echo '**** start clone ****'
     rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
@@ -31,7 +31,7 @@ script: |
     echo '--------- pk file ---------'
     
     rm -f ${PK_FILE} 2> /dev/null
-    wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_CREDENTIAL_SSH}/private
+    wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_CREDENTIAL_SSH_RSA}/private
     chmod 600 ${PK_FILE}
     
     echo '**** config ssh ****'
