@@ -25,7 +25,7 @@ script: |
   
   else
   
-    export PK_FILE=id_rsa_${FLOWCI_CREDENTIAL_SSH}
+    export PK_FILE=id_rsa_${FLOWCI_CREDENTIAL_SSH_RSA}
     echo '--------- pk file ---------'
     echo ${PK_FILE}
     echo '--------- pk file ---------'
