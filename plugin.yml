@@ -17,6 +17,9 @@ inputs:
 script: |
   echo '#################### GIT CLONE ####################'
   
+  echo '**** config ssh ****'
+  export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+  
   if [[ -z "${FLOWCI_CREDENTIAL_SSH_RSA}" ]]; then
   
     echo '**** start clone ****'
@@ -33,10 +36,7 @@ script: |
     rm -f ${PK_FILE} 2> /dev/null
     wget -O ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_CREDENTIAL_SSH_RSA}/private
     chmod 600 ${PK_FILE}
-    
-    echo '**** config ssh ****'
-    export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-  
+      
     echo '**** start clone ****'
     rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
     ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL}'
