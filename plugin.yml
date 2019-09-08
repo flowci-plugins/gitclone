@@ -19,7 +19,7 @@ script: |
   
   export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
   
-  if [[ -z "${FLOWCI_CREDENTIAL_SSH_RSA}" ]]; then
+  if [[ ! -n $FLOWCI_CREDENTIAL_SSH_RSA ]]; then
   
     echo '**** start clone ****'
     rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
