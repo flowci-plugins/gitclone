@@ -17,7 +17,6 @@ inputs:
 script: |
   echo '#################### GIT CLONE ####################'
   
-  echo '**** config ssh ****'
   export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
   
   if [[ -z "${FLOWCI_CREDENTIAL_SSH_RSA}" ]]; then
@@ -28,6 +27,7 @@ script: |
   
   else
   
+    echo '**** config ssh ****'
     export PK_FILE=id_rsa_${FLOWCI_CREDENTIAL_SSH_RSA}
     echo '--------- pk file ---------'
     echo ${PK_FILE}
