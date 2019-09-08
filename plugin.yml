@@ -34,7 +34,7 @@ script: |
     echo '--------- pk file ---------'
     
     rm -f ${PK_FILE} 2> /dev/null
-    curl -o ${PK_FILE} ${FLOWCI_SERVER_URL}/open/credential/rsa/${FLOWCI_CREDENTIAL_SSH_RSA}/private
+    curl -o ${PK_FILE} ${FLOWCI_SERVER_URL}/api/credential/${FLOWCI_CREDENTIAL_SSH_RSA}
     chmod 600 ${PK_FILE}
       
     echo '**** start clone ****'
