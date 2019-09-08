@@ -34,7 +34,8 @@ script: |
     echo '--------- pk file ---------'
     
     rm -f ${PK_FILE} 2> /dev/null
-    curl -H "AGENT-TOKEN: ${FLOWCI_AGENT_TOKEN}" -o ${PK_FILE} ${FLOWCI_SERVER_URL}/api/credential/${FLOWCI_CREDENTIAL_SSH_RSA}
+    curl -H "AGENT-TOKEN: ${FLOWCI_AGENT_TOKEN}" -o ${PK_FILE}.tmp ${FLOWCI_SERVER_URL}/api/credential/${FLOWCI_CREDENTIAL_SSH_RSA}
+    echo -e $(cat ${PK_FILE}.tmp) | tee ${PK_FILE}
     chmod 600 ${PK_FILE}
       
     echo '**** start clone ****'
