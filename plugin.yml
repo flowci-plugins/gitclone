@@ -1,5 +1,10 @@
 name: gitclone
 version: 0.0.1
+icon: "git.svg"
+
+tags:
+- "git"
+
 inputs:
 - name: FLOWCI_GIT_URL
   type: string
