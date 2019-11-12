@@ -48,6 +48,10 @@ def setupCredential(c):
         KeyPath = os.path.join(KeyDir, name)
         print(privateKey, file=open(KeyPath, 'w'))
 
+def cleanUp():
+    if KeyPath is not None:
+        os.remove(KeyPath)
+
 def gitPullOrClone():
     dest = os.path.join(AgentJobDir, GitRepoName)
 
@@ -71,13 +75,17 @@ def gitPullOrClone():
     if KeyPath is not None:
         env["GIT_SSH_COMMAND"] = 'ssh -o {} -o {} -i {}'.format('UserKnownHostsFile=/dev/null', 'StrictHostKeyChecking=no', KeyPath)
 
-    repo = Repo.clone_from(
-        url = GitUrl, 
-        to_path = dest,
-        progress = MyProgressPrinter(),
-        branch = GitBranch,
-        env = env
-    )
+    try:
+        repo = Repo.clone_from(
+            url = GitUrl, 
+            to_path = dest,
+            progress = MyProgressPrinter(),
+            branch = GitBranch,
+            env = env
+        )
+        # TODO: fix bug key too open
+    except Exception as e:
+        print(e)
 
 print("[INFO] -------- start git-clone plugin --------")
 
@@ -87,5 +95,6 @@ print("[INFO] name:       {}".format(GitRepoName))
 print("[INFO] credential: {}".format(CredentialName))
 
 gitPullOrClone()
+cleanUp()
 
 print("[INFO] -------- done --------")
