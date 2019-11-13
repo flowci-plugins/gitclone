@@ -17,7 +17,8 @@ KeyPath = None
 
 class MyProgressPrinter(RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
-        print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "")
+        percentage = "{00:.2f}%".format(cur_count / (max_count) * 100)
+        print(op_code, cur_count, max_count, percentage, message or "")
 
 def isHttpUrl(val):
     return val.startswith('http://') or val.startswith('https://')
@@ -47,6 +48,7 @@ def setupCredential(c):
         privateKey = c['pair']['privateKey']
         KeyPath = os.path.join(KeyDir, name)
         print(privateKey, file=open(KeyPath, 'w'))
+        os.chmod(KeyPath, 0o600)
 
 def cleanUp():
     if KeyPath is not None:
@@ -83,8 +85,8 @@ def gitPullOrClone():
             branch = GitBranch,
             env = env
         )
-        # TODO: fix bug key too open
     except Exception as e:
+        sys.exit(e)
         print(e)
 
 print("[INFO] -------- start git-clone plugin --------")
