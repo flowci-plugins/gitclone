@@ -12,38 +12,11 @@ inputs:
 - name: FLOWCI_GIT_REPO
   type: string
   required: true
-- name: FLOWCI_CREDENTIAL_SSH_RSA
+- name: FLOWCI_CREDENTIAL_NAME
   type: string
   required: false
 
 script: |
-  echo '#################### GIT CLONE ####################'
-  
-  export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-  
-  if [[ ! -n $FLOWCI_CREDENTIAL_SSH_RSA ]]; then
-  
-    echo '**** start clone ****'
-    rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
-    git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL} ${FLOWCI_GIT_REPO}
-  
-  else
-  
-    echo '**** config ssh ****'
-    export PK_FILE=id_rsa_${FLOWCI_CREDENTIAL_SSH_RSA}
-    echo '--------- pk file ---------'
-    echo ${PK_FILE}
-    echo '--------- pk file ---------'
-    
-    rm -f ${PK_FILE} 2> /dev/null
-    curl -H "AGENT-TOKEN: ${FLOWCI_AGENT_TOKEN}" -o ${PK_FILE}.tmp ${FLOWCI_SERVER_URL}/api/credential/${FLOWCI_CREDENTIAL_SSH_RSA}
-    echo -e $(<${PK_FILE}.tmp) | sed 's/"//g' > ${PK_FILE}
-    chmod 600 ${PK_FILE}
-      
-    echo '**** start clone ****'
-    rm -rf ${FLOWCI_GIT_REPO} 2> /dev/null
-    ssh-agent bash -c 'ssh-add ${PK_FILE}; git clone -b ${FLOWCI_GIT_BRANCH} ${FLOWCI_GIT_URL} ${FLOWCI_GIT_REPO}'
-   
-  fi
-  
-  echo '#################### FINISH ####################'
+  plugindir=${FLOWCI_AGENT_PLUGIN_DIR}/gitclone
+  pip3 install gitpython
+  python3 ${plugindir}/src/gitclone.py
