@@ -25,7 +25,7 @@ steps:
 
 - name: list
   script: |
-    cd $(FLOWCI_GIT_REPO)
+    cd ${FLOWCI_GIT_REPO}
     ls
 
 ```
