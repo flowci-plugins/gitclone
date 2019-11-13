@@ -9,7 +9,7 @@ The plugin will clone the git repo based on inputs
 - `FLOWCI_GIT_URL` (required): git http/ssh url, ex: git@github.com:FlowCI/spring-petclinic-sample.git
 - `FLOWCI_GIT_BRANCH` (required): git branch name, ex: master
 - `FLOWCI_GIT_REPO` (required): git repo name
-- `FLOWCI_CREDENTIAL_SSH_RSA`: ssh rsa name created from flow.ci, it's required if git url is based on ssh
+- `FLOWCI_CREDENTIAL_NAME`: credential name created from flow.ci, it's required if git url is based on ssh
 
 ## How to use it
 
