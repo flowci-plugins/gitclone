@@ -12,6 +12,10 @@ inputs:
 - name: FLOWCI_GIT_REPO
   type: string
   required: true
+- name: FLOWCI_GITCLONE_TIMEOUT
+  type: int
+  required: false
+  default: 60
 - name: FLOWCI_CREDENTIAL_NAME
   type: string
   required: false
