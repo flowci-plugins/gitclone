@@ -109,6 +109,7 @@ print("[INFO] -------- start git-clone plugin --------")
 print("[INFO] url:        {}".format(GitUrl))
 print("[INFO] branch:     {}".format(GitBranch))
 print("[INFO] name:       {}".format(GitRepoName))
+print("[INFO] timeout:    {}".format(GitTimeOut))
 print("[INFO] credential: {}".format(CredentialName))
 
 # start git clone process
