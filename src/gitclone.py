@@ -3,7 +3,7 @@ import sys
 import urllib
 import shutil
 import threading
-from multiprocessing import Process, Event
+from multiprocessing import Process, Event, Queue
 from git import Repo
 from git import RemoteProgress
 from util import AgentJobDir, createDir, getVar, fetchCredential
@@ -19,6 +19,7 @@ KeyDir = createDir(os.path.join(AgentJobDir, '.keys'))
 KeyPath = None
 
 ExitEvent = Event()
+StateQueue = Queue()
 
 class MyProgressPrinter(RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
@@ -29,6 +30,11 @@ class MyProgressPrinter(RemoteProgress):
 def isHttpUrl(val):
     return val.startswith('http://') or val.startswith('https://')
 
+def put(code, msg):
+    StateQueue.put({
+        'code': code,
+        'msg': msg
+    })
 
 def setupCredential(c):
     global GitUrl
@@ -39,8 +45,9 @@ def setupCredential(c):
 
     if isHttpUrl(GitUrl):
         if category != 'AUTH':
+            put(1, '[ERROR] Credential type is miss match')
             ExitEvent.set()
-            sys.exit('[ERROR] Credential type is miss match')
+            sys.exit()
         
 
         index = GitUrl.index('://')
@@ -53,8 +60,9 @@ def setupCredential(c):
 
     else:
         if category != 'SSH_RSA':
+            put(1, '[ERROR] Credential type is miss match')
             ExitEvent.set()
-            sys.exit('[ERROR] Credential type is miss match')
+            sys.exit()
 
         privateKey = c['pair']['privateKey']
         KeyPath = os.path.join(KeyDir, name)
@@ -100,11 +108,12 @@ def gitPullOrClone():
             env=env
         )
 
+        put(0, '')
         ExitEvent.set()
     except Exception as e:
-        print(e)
+        put(1, e.strerror)
         ExitEvent.set()
-        sys.exit(e)
+        sys.exit()
 
 print("[INFO] -------- start git-clone plugin --------")
 
@@ -124,7 +133,9 @@ if val is False:
     p.terminate()
     sys.exit('[ERROR] git clone timeout')
 
-if p.exitcode is not 0:
+state = StateQueue.get()
+if state['code'] is not 0:
+    print(state['msg'])
     sys.exit("[INFO] -------- exit with error --------")
 
 cleanUp()
