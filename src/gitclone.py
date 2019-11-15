@@ -39,7 +39,9 @@ def setupCredential(c):
 
     if isHttpUrl(GitUrl):
         if category != 'AUTH':
+            ExitEvent.set()
             sys.exit('[ERROR] Credential type is miss match')
+        
 
         index = GitUrl.index('://')
         index += 3
@@ -51,6 +53,7 @@ def setupCredential(c):
 
     else:
         if category != 'SSH_RSA':
+            ExitEvent.set()
             sys.exit('[ERROR] Credential type is miss match')
 
         privateKey = c['pair']['privateKey']
@@ -65,7 +68,6 @@ def cleanUp():
 
 
 def gitPullOrClone():
-    global ExitEvent
     dest = os.path.join(AgentJobDir, GitRepoName)
 
     # load credential
@@ -100,9 +102,9 @@ def gitPullOrClone():
 
         ExitEvent.set()
     except Exception as e:
-        sys.exit(e)
         print(e)
-
+        ExitEvent.set()
+        sys.exit(e)
 
 print("[INFO] -------- start git-clone plugin --------")
 
@@ -121,6 +123,9 @@ val = ExitEvent.wait(timeout=GitTimeOut)
 if val is False:
     p.terminate()
     sys.exit('[ERROR] git clone timeout')
+
+if p.exitcode is not 0:
+    sys.exit("[INFO] -------- exit with error --------")
 
 cleanUp()
 
