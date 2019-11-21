@@ -6,16 +6,16 @@ import threading
 from multiprocessing import Process, Event, Queue
 from git import Repo
 from git import RemoteProgress
-from util import AgentJobDir, createDir, getVar, fetchCredential
+from flowci import client, domain
 
 # inputs of plugin
-GitUrl = getVar('FLOWCI_GIT_URL')
-GitBranch = getVar('FLOWCI_GIT_BRANCH')
-GitRepoName = getVar('FLOWCI_GIT_REPO')
-GitTimeOut = int(getVar('FLOWCI_GITCLONE_TIMEOUT'))
+GitUrl = client.GetVar('FLOWCI_GIT_URL')
+GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
+GitRepoName = client.GetVar('FLOWCI_GIT_REPO')
+GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
 
-CredentialName = getVar('FLOWCI_CREDENTIAL_NAME', False)
-KeyDir = createDir(os.path.join(AgentJobDir, '.keys'))
+CredentialName = client.GetVar('FLOWCI_CREDENTIAL_NAME', False)
+KeyDir = createDir(os.path.join(domain.AgentJobDir, '.keys'))
 KeyPath = None
 
 ExitEvent = Event()
@@ -26,6 +26,12 @@ class MyProgressPrinter(RemoteProgress):
         percentage = "{00:.2f}%".format(cur_count / (max_count) * 100)
         print(op_code, cur_count, max_count, percentage, message or "")
 
+
+def createDir(path):
+    try:
+        return os.makedirs(path)
+    except FileExistsError:
+        return path
 
 def isHttpUrl(val):
     return val.startswith('http://') or val.startswith('https://')
@@ -76,11 +82,12 @@ def cleanUp():
 
 
 def gitPullOrClone():
-    dest = os.path.join(AgentJobDir, GitRepoName)
+    dest = os.path.join(domain.AgentJobDir, GitRepoName)
 
     # load credential
     if CredentialName is not None:
-        c = fetchCredential(CredentialName)
+        api = client.Client()
+        c = api.getCredential(CredentialName)
         setupCredential(c)
 
     # clean up
