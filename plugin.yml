@@ -25,7 +25,6 @@ exports:
   - "FLOWCI_GIT_COMMIT_ID"
   - "FLOWCI_GIT_COMMIT_MESSAGE"
   - "FLOWCI_GIT_COMMIT_TIME"
-  - "FLOWCI_GIT_COMMIT_URL"
 
 script: |
   plugindir=${FLOWCI_AGENT_PLUGIN_DIR}/gitclone

@@ -3,9 +3,8 @@ import sys
 import urllib
 import shutil
 import threading
-
+from datetime import datetime
 from threading import Thread, Event
-# from multiprocessing import Process, Event, Queue
 from git import Repo
 from git import RemoteProgress
 from flowci import client, domain
@@ -15,6 +14,11 @@ GitUrl = client.GetVar('FLOWCI_GIT_URL')
 GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
 GitRepoName = client.GetVar('FLOWCI_GIT_REPO')
 GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
+
+VarAuthor = "FLOWCI_GIT_AUTHOR"
+VarCommitID = "FLOWCI_GIT_COMMIT_ID"
+VarCommitMessage = "FLOWCI_GIT_COMMIT_MESSAGE"
+VarCommitTime = "FLOWCI_GIT_COMMIT_TIME"
 
 CredentialName = client.GetVar('FLOWCI_CREDENTIAL_NAME', False)
 KeyPath = None
@@ -118,7 +122,22 @@ def gitPullOrClone():
             env=env
         )
 
+        # init submodule
+        # 'git submodule sync'
+        # 'git submodule update --init --recursive --remote'
+
         head = repo.head
+
+        if head != None and head.commit != None:
+            sha = head.commit.hexsha
+            message = head.commit.message
+            dt = head.commit.committed_datetime
+            email = head.commit.author.email
+
+            os.environ[VarAuthor] = email
+            os.environ[VarCommitID] = sha
+            os.environ[VarCommitMessage] = message
+            os.environ[VarCommitTime] = dt.strftime('%Y-%m-%d %H:%M:%S')
 
         put(0, '')
         ExitEvent.set()
@@ -151,5 +170,4 @@ if State['code'] is not 0:
     sys.exit("[INFO] -------- exit with error --------")
 
 cleanUp()
-
 print("[INFO] -------- done --------")
