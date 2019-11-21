@@ -3,7 +3,8 @@ import sys
 import urllib
 import shutil
 import threading
-from multiprocessing import Process, Event, Queue
+from datetime import datetime
+from threading import Thread, Event
 from git import Repo
 from git import RemoteProgress
 from flowci import client, domain
@@ -14,12 +15,16 @@ GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
 GitRepoName = client.GetVar('FLOWCI_GIT_REPO')
 GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
 
+VarAuthor = "FLOWCI_GIT_AUTHOR"
+VarCommitID = "FLOWCI_GIT_COMMIT_ID"
+VarCommitMessage = "FLOWCI_GIT_COMMIT_MESSAGE"
+VarCommitTime = "FLOWCI_GIT_COMMIT_TIME"
+
 CredentialName = client.GetVar('FLOWCI_CREDENTIAL_NAME', False)
-KeyDir = createDir(os.path.join(domain.AgentJobDir, '.keys'))
 KeyPath = None
 
 ExitEvent = Event()
-StateQueue = Queue()
+State = {}
 
 class MyProgressPrinter(RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
@@ -37,15 +42,17 @@ def isHttpUrl(val):
     return val.startswith('http://') or val.startswith('https://')
 
 def put(code, msg):
-    StateQueue.put({
+    global State
+    State = {
         'code': code,
         'msg': msg
-    })
+    }
 
 def setupCredential(c):
     global GitUrl
     global KeyPath
 
+    keyDir = createDir(os.path.join(domain.AgentJobDir, '.keys'))
     name = c['name']
     category = c['category']
 
@@ -53,7 +60,7 @@ def setupCredential(c):
         if category != 'AUTH':
             put(1, '[ERROR] Credential type is miss match')
             ExitEvent.set()
-            sys.exit()
+            return
         
 
         index = GitUrl.index('://')
@@ -68,10 +75,10 @@ def setupCredential(c):
         if category != 'SSH_RSA':
             put(1, '[ERROR] Credential type is miss match')
             ExitEvent.set()
-            sys.exit()
+            return
 
         privateKey = c['pair']['privateKey']
-        KeyPath = os.path.join(KeyDir, name)
+        KeyPath = os.path.join(keyDir, name)
         print(privateKey, file=open(KeyPath, 'w'))
         os.chmod(KeyPath, 0o600)
 
@@ -115,12 +122,28 @@ def gitPullOrClone():
             env=env
         )
 
+        # init submodule
+        # 'git submodule sync'
+        # 'git submodule update --init --recursive --remote'
+
+        head = repo.head
+
+        if head != None and head.commit != None:
+            sha = head.commit.hexsha
+            message = head.commit.message
+            dt = head.commit.committed_datetime
+            email = head.commit.author.email
+
+            os.environ[VarAuthor] = email
+            os.environ[VarCommitID] = sha
+            os.environ[VarCommitMessage] = message
+            os.environ[VarCommitTime] = dt.strftime('%Y-%m-%d %H:%M:%S')
+
         put(0, '')
         ExitEvent.set()
     except Exception as e:
         put(1, e.strerror)
         ExitEvent.set()
-        sys.exit()
 
 print("[INFO] -------- start git-clone plugin --------")
 
@@ -131,20 +154,20 @@ print("[INFO] timeout:    {}".format(GitTimeOut))
 print("[INFO] credential: {}".format(CredentialName))
 
 # start git clone process
-p = Process(target=gitPullOrClone)
+
+p = Thread(target=gitPullOrClone)
 p.start()
 
 # kill if not finished within 60 seconds
 val = ExitEvent.wait(timeout=GitTimeOut)
 if val is False:
-    p.terminate()
+    cleanUp()
     sys.exit('[ERROR] git clone timeout')
 
-state = StateQueue.get()
-if state['code'] is not 0:
-    print(state['msg'])
+if State['code'] is not 0:
+    print(State['msg'])
+    cleanUp()
     sys.exit("[INFO] -------- exit with error --------")
 
 cleanUp()
-
 print("[INFO] -------- done --------")
