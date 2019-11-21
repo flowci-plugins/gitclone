@@ -3,22 +3,29 @@ version: 1.0.0
 icon: "git.svg"
 
 inputs:
-- name: FLOWCI_GIT_URL
-  type: string
-  required: true
-- name: FLOWCI_GIT_BRANCH
-  type: string
-  required: true
-- name: FLOWCI_GIT_REPO
-  type: string
-  required: true
-- name: FLOWCI_GITCLONE_TIMEOUT
-  type: int
-  required: false
-  value: 60
-- name: FLOWCI_CREDENTIAL_NAME
-  type: string
-  required: false
+  - name: FLOWCI_GIT_URL
+    type: string
+    required: true
+  - name: FLOWCI_GIT_BRANCH
+    type: string
+    required: true
+  - name: FLOWCI_GIT_REPO
+    type: string
+    required: true
+  - name: FLOWCI_GITCLONE_TIMEOUT
+    type: int
+    required: false
+    value: 60
+  - name: FLOWCI_CREDENTIAL_NAME
+    type: string
+    required: false
+
+exports:
+  - "FLOWCI_GIT_AUTHOR"
+  - "FLOWCI_GIT_COMMIT_ID"
+  - "FLOWCI_GIT_COMMIT_MESSAGE"
+  - "FLOWCI_GIT_COMMIT_TIME"
+  - "FLOWCI_GIT_COMMIT_URL"
 
 script: |
   plugindir=${FLOWCI_AGENT_PLUGIN_DIR}/gitclone
