@@ -90,10 +90,10 @@ def cleanUp():
 
 def gitPullOrClone():
     dest = os.path.join(domain.AgentJobDir, GitRepoName)
+    api = client.Client()
 
     # load credential
     if CredentialName is not None:
-        api = client.Client()
         c = api.getCredential(CredentialName)
         setupCredential(c)
 
@@ -134,10 +134,12 @@ def gitPullOrClone():
             dt = head.commit.committed_datetime
             email = head.commit.author.email
 
-            os.environ[VarAuthor] = email
-            os.environ[VarCommitID] = sha
-            os.environ[VarCommitMessage] = message
-            os.environ[VarCommitTime] = dt.strftime('%Y-%m-%d %H:%M:%S')
+            api.addJobContext({
+                VarAuthor: email,
+                VarCommitID: sha,
+                VarCommitMessage: message,
+                VarCommitTime: dt.strftime('%Y-%m-%d %H:%M:%S')
+            })
 
         put(0, '')
         ExitEvent.set()
