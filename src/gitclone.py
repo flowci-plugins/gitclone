@@ -19,6 +19,7 @@ VarAuthor = "FLOWCI_GIT_AUTHOR"
 VarCommitID = "FLOWCI_GIT_COMMIT_ID"
 VarCommitMessage = "FLOWCI_GIT_COMMIT_MESSAGE"
 VarCommitTime = "FLOWCI_GIT_COMMIT_TIME"
+VarCommitNum = "FLOWCI_GIT_COMMIT_NUM"
 
 CredentialName = client.GetVar('FLOWCI_CREDENTIAL_NAME', False)
 KeyPath = None
@@ -138,13 +139,14 @@ def gitPullOrClone():
                 VarAuthor: email,
                 VarCommitID: sha,
                 VarCommitMessage: message,
-                VarCommitTime: dt.strftime('%Y-%m-%d %H:%M:%S')
+                VarCommitTime: dt.strftime('%Y-%m-%d %H:%M:%S'),
+                VarCommitNum: 1
             })
 
         put(0, '')
         ExitEvent.set()
     except Exception as e:
-        put(1, e.strerror)
+        put(1, 'Failed to clone git repo')
         ExitEvent.set()
 
 print("[INFO] -------- start git-clone plugin --------")
