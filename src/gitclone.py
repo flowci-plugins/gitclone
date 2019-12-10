@@ -143,6 +143,9 @@ def gitPullOrClone():
                 VarCommitNum: 1
             })
 
+        for submodule in repo.submodules:
+            submodule.update(init=True)
+
         put(0, '')
         ExitEvent.set()
     except Exception as e:
