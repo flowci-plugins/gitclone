@@ -12,14 +12,14 @@ inputs:
   - name: FLOWCI_GIT_REPO
     type: string
     required: true
+  - name: FLOWCI_GIT_CREDENTIAL
+    type: string
+    required: false
   - name: FLOWCI_GITCLONE_TIMEOUT
     type: int
     required: false
     value: 60
-  - name: FLOWCI_GIT_CREDENTIAL
-    type: string
-    required: false
-
+    
 exports:
   - "FLOWCI_GIT_AUTHOR"
   - "FLOWCI_GIT_COMMIT_ID"
