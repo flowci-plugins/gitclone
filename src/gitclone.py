@@ -29,7 +29,10 @@ State = {}
 
 class MyProgressPrinter(RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
-        percentage = "{00:.2f}%".format(cur_count / (max_count) * 100)
+        if max_count == '':
+            max_count = 1
+
+        percentage = "{00:.2f}%".format(cur_count / max_count * 100)
         print(op_code, cur_count, max_count, percentage, message or "")
 
 
@@ -143,13 +146,13 @@ def gitPullOrClone():
                 VarCommitNum: 1
             })
 
-        for submodule in repo.submodules:
-            submodule.update(init=True)
+        output = repo.git.submodule('update', '--init')
+        print(output)
 
         put(0, '')
         ExitEvent.set()
     except Exception as e:
-        put(1, 'Failed to clone git repo')
+        put(1, 'Failed to clone git repo: ' + str(e))
         ExitEvent.set()
 
 print("[INFO] -------- start git-clone plugin --------")
