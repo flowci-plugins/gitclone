@@ -16,7 +16,7 @@ inputs:
     type: int
     required: false
     value: 60
-  - name: FLOWCI_CREDENTIAL_NAME
+  - name: FLOWCI_GIT_CREDENTIAL
     type: string
     required: false
 

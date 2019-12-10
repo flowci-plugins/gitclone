@@ -21,7 +21,7 @@ VarCommitMessage = "FLOWCI_GIT_COMMIT_MESSAGE"
 VarCommitTime = "FLOWCI_GIT_COMMIT_TIME"
 VarCommitNum = "FLOWCI_GIT_COMMIT_NUM"
 
-CredentialName = client.GetVar('FLOWCI_CREDENTIAL_NAME', False)
+CredentialName = client.GetVar('FLOWCI_GIT_CREDENTIAL', False)
 KeyPath = None
 
 ExitEvent = Event()
