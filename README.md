@@ -12,6 +12,13 @@ The plugin will clone the git repo based on inputs
 - `FLOWCI_GIT_CREDENTIAL`: credential name created from flow.ci, it's required if git url is based on ssh
 - `FLOWCI_GITCLONE_TIMEOUT`: timeout for gitclone in seconds, default is 60 seconds
 
+## Exports
+
+- `FLOWCI_GIT_AUTHOR`: commit author email
+- `FLOWCI_GIT_COMMIT_ID`: commit id
+- `FLOWCI_GIT_COMMIT_MESSAGE`: commit message
+- `FLOWCI_GIT_COMMIT_TIME`: commit time
+
 ## How to use it
 
 ```yml
