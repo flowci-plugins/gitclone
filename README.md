@@ -2,7 +2,7 @@
 
 ## Description
 
-The plugin will clone the git repo based on inputs
+The plugin will clone the git repo, and submodules based on inputs
 
 ## Inputs
 
