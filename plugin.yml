@@ -26,7 +26,13 @@ exports:
   - "FLOWCI_GIT_COMMIT_MESSAGE"
   - "FLOWCI_GIT_COMMIT_TIME"
 
+docker:
+  image: python:3.6
+
 script: |
-  plugindir=${FLOWCI_AGENT_PLUGIN_DIR}/gitclone
   pip3 install gitpython
+  pip3 install requests
+  pip3 install python-lib-flow.ci
+
+  plugindir=${FLOWCI_AGENT_PLUGIN_DIR}/gitclone
   python3 ${plugindir}/src/gitclone.py
