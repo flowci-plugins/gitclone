@@ -25,10 +25,7 @@ exports:
   - "FLOWCI_GIT_COMMIT_ID"
   - "FLOWCI_GIT_COMMIT_MESSAGE"
   - "FLOWCI_GIT_COMMIT_TIME"
-
-docker:
-  image: python:3.6
-
+  
 script: |
   python3 -m pip install gitpython
 
