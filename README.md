@@ -7,8 +7,9 @@ The plugin will clone the git repo, and submodules based on inputs
 ## Inputs
 
 - `FLOWCI_GIT_URL` (required): git http/ssh url, ex: git@github.com:FlowCI/spring-petclinic-sample.git
-- `FLOWCI_GIT_BRANCH` (required): git branch name, ex: master
 - `FLOWCI_GIT_REPO` (required): git repo name
+- `FLOWCI_GIT_BRANCH`: git branch name, default value is master
+- `FLOWCI_GIT_COMMIT_ID`: clone from commit id if this variable specified
 - `FLOWCI_GIT_CREDENTIAL`: credential name created from flow.ci, it's required if git url is based on ssh
 - `FLOWCI_GITCLONE_TIMEOUT`: timeout for gitclone in seconds, default is 60 seconds
 

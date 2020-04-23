@@ -11,8 +11,9 @@ from flowci import client, domain
 
 # inputs of plugin
 GitUrl = client.GetVar('FLOWCI_GIT_URL')
-GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
 GitRepoName = client.GetVar('FLOWCI_GIT_REPO')
+GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
+GitCommitId = client.GetVar('FLOWCI_GIT_COMMIT_ID', False)
 GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
 
 VarAuthor = "FLOWCI_GIT_AUTHOR"
@@ -123,15 +124,16 @@ def gitPullOrClone():
             to_path=dest,
             progress=MyProgressPrinter(),
             branch=GitBranch,
+            depth=1,
             env=env
         )
 
-        # init submodule
-        # 'git submodule sync'
-        # 'git submodule update --init --recursive --remote'
+        # fetch and checkout to specific commit id
+        if GitCommitId != None:
+            repo.remotes.origin.fetch(GitCommitId, progress=MyProgressPrinter())
+            repo.git.checkout(GitCommitId)
 
         head = repo.head
-
         if head != None and head.commit != None:
             sha = head.commit.hexsha
             message = head.commit.message
@@ -158,8 +160,9 @@ def gitPullOrClone():
 print("[INFO] -------- start git-clone plugin --------")
 
 print("[INFO] url:        {}".format(GitUrl))
+print("[INFO] repo name:  {}".format(GitRepoName))
 print("[INFO] branch:     {}".format(GitBranch))
-print("[INFO] name:       {}".format(GitRepoName))
+print("[INFO] commit:     {}".format(GitCommitId))
 print("[INFO] timeout:    {}".format(GitTimeOut))
 print("[INFO] credential: {}".format(CredentialName))
 
