@@ -12,7 +12,7 @@ from flowci import client, domain
 # inputs of plugin
 GitUrl = client.GetVar('FLOWCI_GIT_URL')
 GitRepoName = client.GetVar('FLOWCI_GIT_REPO')
-GitBranch = client.GetVar('FLOWCI_GIT_BRANCH')
+GitBranch = client.GetVar('FLOWCI_GIT_BRANCH', False)
 GitCommitId = client.GetVar('FLOWCI_GIT_COMMIT_ID', False)
 GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
 
@@ -118,20 +118,18 @@ def gitPullOrClone():
         env["GIT_SSH_COMMAND"] = 'ssh -o {} -o {} -i {}'.format(
             'UserKnownHostsFile=/dev/null', 'StrictHostKeyChecking=no', KeyPath)
 
-    try:
-        repo = Repo.clone_from(
-            url=GitUrl,
-            to_path=dest,
-            progress=MyProgressPrinter(),
-            branch=GitBranch,
-            depth=1,
-            env=env
-        )
+    branchOrCommit = GitBranch
+    if GitCommitId != None:
+        branchOrCommit = GitCommitId
 
-        # fetch and checkout to specific commit id
-        if GitCommitId != None:
-            repo.remotes.origin.fetch(GitCommitId, progress=MyProgressPrinter())
-            repo.git.checkout(GitCommitId)
+    if branchOrCommit == None:
+        sys.exit("FLOWCI_GIT_BRANCH or FLOWCI_GIT_COMMIT_ID must be defined")
+
+    try:
+        repo = Repo.init(dest)
+        repo.create_remote('origin', url=GitUrl)
+        repo.remotes.origin.fetch(branchOrCommit, progress=MyProgressPrinter(), env=env)
+        repo.git.checkout(branchOrCommit)
 
         head = repo.head
         if head != None and head.commit != None:
