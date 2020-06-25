@@ -13,9 +13,6 @@ inputs:
   - name: FLOWCI_GIT_COMMIT_ID
     type: string
     required: false
-  - name: FLOWCI_GIT_REPO
-    type: string
-    required: true
   - name: FLOWCI_GIT_CREDENTIAL
     type: string
     required: false
