@@ -11,6 +11,7 @@ The plugin will clone the git repo, and submodules based on inputs
 - `FLOWCI_GIT_COMMIT_ID`: clone from commit id if this variable specified
 - `FLOWCI_GIT_CREDENTIAL`: credential name created from flow.ci, it's required if git url is based on ssh
 - `FLOWCI_GITCLONE_TIMEOUT`: timeout for gitclone in seconds, default is 60 seconds
+- `FLOWCI_PIP_SOURCE`: since `gitpython` will be installed from `pip`, you can define the pip source if needed
 
 ## Exports
 
