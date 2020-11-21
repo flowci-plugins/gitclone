@@ -34,6 +34,10 @@ steps:
 - name: clone
   plugin: 'gitclone'
 
+  # customize pip source from FLOWCI_PIP_SOURCE, please add --trusted-host if source is not https
+  # envs:
+  #   FLOWCI_PIP_SOURCE: "http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com"
+
 - name: list
   script: |
     cd ${FLOWCI_GIT_REPO}
