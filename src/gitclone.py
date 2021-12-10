@@ -156,7 +156,7 @@ def gitPullOrClone():
                 VarCommitID: sha,
                 VarCommitMessage: message,
                 VarCommitTotal: 1,
-                VarCommitList: base64.b64encode(json.dumps(commitList).encode("ascii"))
+                VarCommitList: str(base64.b64encode(json.dumps(commitList).encode("utf-8")), "utf-8")
             })
 
         output = repo.git.submodule('update', '--init')
