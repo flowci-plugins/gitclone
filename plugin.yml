@@ -23,13 +23,8 @@ inputs:
   - name: FLOWCI_PIP_SOURCE
     type: string
     required: false
-    
-exports:
-  - "FLOWCI_GIT_COMMIT_ID"
-  - "FLOWCI_GIT_COMMIT_MESSAGE"
-  - "FLOWCI_GIT_COMMIT_LIST"
   
-script: |
+bash: |
   if [ -z $FLOWCI_PIP_SOURCE ]; then
     python3 -m pip install gitpython
   else
