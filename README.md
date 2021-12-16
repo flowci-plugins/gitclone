@@ -13,12 +13,11 @@ The plugin will clone the git repo, and submodules based on inputs
 - `FLOWCI_GITCLONE_TIMEOUT`: timeout for gitclone in seconds, default is 60 seconds
 - `FLOWCI_PIP_SOURCE`: since `gitpython` will be installed from `pip`, you can define the pip source if needed
 
-## Exports
+## Outputs to job context
 
-- `FLOWCI_GIT_AUTHOR`: commit author email
-- `FLOWCI_GIT_COMMIT_ID`: commit id
-- `FLOWCI_GIT_COMMIT_MESSAGE`: commit message
-- `FLOWCI_GIT_COMMIT_TIME`: commit time
+- `FLOWCI_GIT_COMMIT_ID`: head commit id
+- `FLOWCI_GIT_COMMIT_MESSAGE`: head commit message
+- `FLOWCI_GIT_COMMIT_LIST`:  commit list as base64 json format, ex: `[{id:xxx, mesage:xxx, time:xxx, author:{email:xxx, name:xxx}}]`
 
 ## How to use it
 

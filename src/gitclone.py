@@ -2,7 +2,8 @@ import os
 import sys
 import urllib
 import shutil
-import threading
+import base64
+import json
 from datetime import datetime
 from threading import Thread, Event
 from git import Repo
@@ -16,11 +17,11 @@ GitBranch = client.GetVar('FLOWCI_GIT_BRANCH', False)
 GitCommitId = client.GetVar('FLOWCI_GIT_COMMIT_ID', False)
 GitTimeOut = int(client.GetVar('FLOWCI_GITCLONE_TIMEOUT'))
 
-VarAuthor = "FLOWCI_GIT_AUTHOR"
 VarCommitID = "FLOWCI_GIT_COMMIT_ID"
 VarCommitMessage = "FLOWCI_GIT_COMMIT_MESSAGE"
-VarCommitTime = "FLOWCI_GIT_COMMIT_TIME"
-VarCommitNum = "FLOWCI_GIT_COMMIT_NUM"
+VarCommitTotal = "FLOWCI_GIT_COMMIT_TOTAL"
+VarCommitList = "FLOWCI_GIT_COMMIT_LIST"
+
 
 CredentialName = client.GetVar('FLOWCI_GIT_CREDENTIAL', False)
 KeyPath = None
@@ -137,13 +138,25 @@ def gitPullOrClone():
             message = head.commit.message
             dt = head.commit.committed_datetime
             email = head.commit.author.email
+            name = head.commit.author.name
+
+            commitList = [
+                {
+                    'id': sha,
+                    'message': message,
+                    'time': dt.strftime('%Y-%m-%d %H:%M:%S'),
+                    'author': {
+                        'name': name,
+                        'email': email
+                    }
+                }
+            ]
 
             api.addJobContext({
-                VarAuthor: email,
                 VarCommitID: sha,
                 VarCommitMessage: message,
-                VarCommitTime: dt.strftime('%Y-%m-%d %H:%M:%S'),
-                VarCommitNum: 1
+                VarCommitTotal: 1,
+                VarCommitList: str(base64.b64encode(json.dumps(commitList).encode("utf-8")), "utf-8")
             })
 
         output = repo.git.submodule('update', '--init')
