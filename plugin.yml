@@ -25,10 +25,9 @@ inputs:
     required: false
     
 exports:
-  - "FLOWCI_GIT_AUTHOR"
   - "FLOWCI_GIT_COMMIT_ID"
   - "FLOWCI_GIT_COMMIT_MESSAGE"
-  - "FLOWCI_GIT_COMMIT_TIME"
+  - "FLOWCI_GIT_COMMIT_LIST"
   
 script: |
   if [ -z $FLOWCI_PIP_SOURCE ]; then
