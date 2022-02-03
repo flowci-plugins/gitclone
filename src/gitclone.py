@@ -94,6 +94,13 @@ def cleanUp():
         os.remove(KeyPath)
 
 
+def convertToBranchName(branchOrCommit):
+    if not branchOrCommit.startswith("refs/"):
+        return branchOrCommit
+
+    return branchOrCommit.replace("/", "_")
+
+
 def gitPullOrClone():
     dest = os.path.join(domain.AgentJobDir, GitRepoName)
     api = client.Client()
@@ -130,7 +137,9 @@ def gitPullOrClone():
         repo = Repo.init(dest)
         repo.create_remote('origin', url=GitUrl)
         repo.remotes.origin.fetch(branchOrCommit, progress=MyProgressPrinter(), env=env)
-        repo.git.checkout(branchOrCommit)
+
+        # convert patchset (refs/changes/21/21/5) to branch (changes_21_21_5)
+        repo.git.checkout(convertToBranchName(branchOrCommit))
 
         head = repo.head
         if head != None and head.commit != None:
