@@ -139,7 +139,7 @@ def gitPullOrClone():
         repo.remotes.origin.fetch(branchOrCommit, progress=MyProgressPrinter(), env=env)
 
         # convert patchset (refs/changes/21/21/5) to branch (changes_21_21_5)
-        repo.git.checkout(convertToBranchName(branchOrCommit))
+        repo.git.checkout('FETCH_HEAD', convertToBranchName(branchOrCommit))
 
         head = repo.head
         if head != None and head.commit != None:
